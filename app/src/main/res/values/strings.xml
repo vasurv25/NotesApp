@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">NotesApp</string>
+    <string name="dont_have_an_account_sign_up">Don\'t have an account? Sign Up</string>
+    <string name="already_have_an_account">Already have an account? LogIn</string>
+    <string name="no_network_connectivity">No network available. Please try again!</string>
+    <string name="enter_valid_email">Invalid email</string>
+    <string name="enter_valid_password">Please enter a valid Password</string>
+    <string name="enter_valid_name">Please enter a valid Name</string>
+    <string name="enter_phone_number">Enter 10 digit phone number</string>
+    <string name="empty_fields">Empty Fields</string>
+    <string name="choose_password">Choose a password of at least 8 characters and it should be combination of 1 uppercase, 1 lowercase and 1 number</string>
+</resources>
