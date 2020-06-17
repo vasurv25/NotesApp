@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.example.notesapp.R;
 import com.example.notesapp.login.LoginActivity;
@@ -71,7 +73,7 @@ public class ActivityOne extends AppCompatActivity {
     }
 
     private void showProgressDialog() {
-        mProgressBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_IN);
+        mProgressBar.getIndeterminateDrawable().setColorFilter(new PorterDuffColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_IN));
         mProgressBar.setVisibility(View.VISIBLE);
     }
 
@@ -117,7 +119,7 @@ public class ActivityOne extends AppCompatActivity {
     }
 
     private void fadeOutProgressDialog() {
-        mProgressBar.animate().alpha(0f).setDuration(200).start();
+        //mProgressBar.animate().alpha(0f).setDuration(200).start();
     }
 
     private void delayStartNextActivity() {

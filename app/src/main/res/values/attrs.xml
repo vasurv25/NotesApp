@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="MultiStateButton">
+        <attr name="progress_state"/>
+        <attr name="disabled_background" format="integer" />
+        <attr name="active_background" format="integer" />
+        <attr name="busy_background" format="integer" />
+        <attr name="complete_background" format="integer" />
+        <attr name="disabled_text" format="string" />
+        <attr name="active_text" format="string" />
+        <attr name="busy_text" format="string" />
+        <attr name="complete_text" format="string" />
+    </declare-styleable>
+</resources>

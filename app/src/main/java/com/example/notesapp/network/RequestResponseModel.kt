@@ -18,13 +18,13 @@ data class Data(
 ) : BaseModel()
 
 data class Error(
-    @SerializedName("status") val status: String?,
+    @SerializedName("status") val status: Int?,
     @SerializedName("statusCode") val statusCode: String?,
     @SerializedName("message") val message: String?
 ) : BaseModel()
 
 data class LoginResponse(
-    @SerializedName("data") val data: String?,
+    @SerializedName("data") val data: Data?,
     @SerializedName("error") val error: Error?
 ) : BaseModel()
 
@@ -34,7 +34,6 @@ data class SignUpRequest(
     @SerializedName("middleName") var middleName: String?,
     @SerializedName("lastName") var lastName: String?,
     @SerializedName("email") var email: String?,
-    @SerializedName("city") var city: Int?,
     @SerializedName("mobileNumber") var mobileNumber: String?,
     @SerializedName("password") var password: String?,
     @SerializedName("channel") var channel: Int?
@@ -47,7 +46,9 @@ data class DataSignUp(
     @SerializedName("lastName") val lastName: String?,
     @SerializedName("userId") val email: String?,
     @SerializedName("username") val mobileNumber: String?,
-    @SerializedName("mobileNumber") val channel: String?
+    @SerializedName("mobileNumber") val channel: String?,
+    @SerializedName("smsOtp") val smsOtp: String?,
+    @SerializedName("mailOtp") val mailOtp: String?
 ) : BaseModel()
 
 data class ErrorSignUp(
@@ -59,4 +60,14 @@ data class ErrorSignUp(
 data class SignUpResponse(
     @SerializedName("data") val data: DataSignUp?,
     @SerializedName("error") val error: ErrorSignUp?
+) : BaseModel()
+
+data class ForgetPasswordResponse(
+    @SerializedName("otpDetails") val otpDetails: OtpDetails? = null,
+    @SerializedName("error") val error: Error?
+) : BaseModel()
+
+data class OtpDetails(
+    @SerializedName("mailOtp") val mailOtp: String?,
+    @SerializedName("smsOtp") val smsOtp: String?
 ) : BaseModel()

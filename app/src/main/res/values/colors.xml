@@ -14,6 +14,15 @@
     <color name="colorGreen">#58b947</color>
     <color name="colorBgGrey">#eeeeee</color>
     <color name="colorBlue">#87CEFA</color>
-    <color name="orange">#fd7e14</color>
+    <color name="orange">#ff7226</color>
     <color name="darkBlue">#343a40</color>
+    <color name="colorBackground">#419bf9</color>
+    <color name="colorEdittextBorder">#34a853</color>
+    <color name="colorForgetPass">#7a7a7a</color>
+    <color name="colorSeperatorLogin">#b1b1b2</color>
+    <color name="colorTransparentWhite">#66ffffff</color>
+    <color name="color_orange_text">#f36b45</color>
+    <color name="color_pin_bg">#f57244</color>
+    <color name="color_pin_border">#fba843</color>
+    <color name="color_ripple">#D84315</color>
 </resources>

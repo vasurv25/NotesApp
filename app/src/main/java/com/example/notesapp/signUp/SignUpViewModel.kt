@@ -11,10 +11,7 @@ import com.example.notesapp.NotesApp
 import com.example.notesapp.R
 import com.example.notesapp.network.SignUpRequest
 import com.example.notesapp.network.SignUpResponse
-import com.example.utils.AuthTypes
-import com.example.utils.isEmail
-import com.example.utils.isValidPassword
-import com.example.utils.isValidPhoneNumber
+import com.example.utils.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import org.json.JSONObject
@@ -32,15 +29,15 @@ class SignUpViewModel :ViewModel() {
     var isEmailValid = ObservableBoolean()
     var isPasswordValid = ObservableBoolean()
     var isFirstNameValid = ObservableBoolean()
-    var isLastNameValid = ObservableBoolean()
     var isNumberValid = ObservableBoolean()
     var mShowErrorSnackBar: MutableLiveData<String> = MutableLiveData()
     private var mSignUpRequest: SignUpRequest =
-        SignUpRequest(null, "dfsd","sdfsd", null, 1, "9907088897", null,  AuthTypes.MOBILE)
+        SignUpRequest(null, "dfsd","sdfsd", null, "9907088897", null,  AuthTypes.MOBILE)
     private var mSignUpResponse: MutableLiveData<Response<SignUpResponse>> = MutableLiveData()
     private var mCompositeDisposable: CompositeDisposable? = CompositeDisposable()
+    var mLoading: MutableLiveData<Boolean> = MutableLiveData()
 
-    val firstNameWatcher = object : TextWatcher {
+    val fullNameWatcher = object : TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
         }
         override fun onTextChanged(edit: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -50,20 +47,6 @@ class SignUpViewModel :ViewModel() {
             if (!edit.isNullOrEmpty()) {
                 isFirstNameValid.set(true)
                 isFirstNameValid.notifyChange()
-            }
-        }
-    }
-
-    val lastNameWatcher = object : TextWatcher {
-        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-        }
-        override fun onTextChanged(edit: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            mLastName = edit.toString()
-        }
-        override fun afterTextChanged(edit: Editable?) {
-            if (!edit.isNullOrEmpty()) {
-                isLastNameValid.set(true)
-                isLastNameValid.notifyChange()
             }
         }
     }
@@ -89,7 +72,7 @@ class SignUpViewModel :ViewModel() {
             mPassword = edit.toString()
         }
         override fun afterTextChanged(edit: Editable?) {
-            if (!edit.isNullOrEmpty()) {
+            if (validatePassword(edit.toString())) {
                 isPasswordValid.set(true)
                 isPasswordValid.notifyChange()
             }
@@ -114,48 +97,63 @@ class SignUpViewModel :ViewModel() {
         Log.i(TAG, "onSignUpClick")
         isEmailValid.set(mEmail?.isNotEmpty() ?: false)
         isEmailValid.notifyChange()
+
         isPasswordValid.set(mPassword?.isNotEmpty() ?: false)
         isPasswordValid.notifyChange()
+
         isFirstNameValid.set(mFirstName?.isNotEmpty() ?: false)
         isFirstNameValid.notifyChange()
-        isLastNameValid.set(mLastName?.isNotEmpty() ?: false)
-        isLastNameValid.notifyChange()
+
         isNumberValid.set(mNumber?.isNotEmpty() ?: false)
         isNumberValid.notifyChange()
-        if (isFirstNameValid.get() && isLastNameValid.get() && isEmailValid.get() && isNumberValid.get() && isPasswordValid.get()) {
 
-            if (!mNumber!!.isValidPhoneNumber()) {
+        if (isFirstNameValid.get() && isEmailValid.get() && isNumberValid.get() && isPasswordValid.get()) {
+
+            if (!validatePhoneNumber(mNumber)) {
                 mShowErrorSnackBar.value =
                     NotesApp.getInstance().getString(R.string.enter_phone_number)
-            } else if (!mPassword!!.isValidPassword()) {
+            } else if (!validatePassword(mPassword)) {
                 mShowErrorSnackBar.value =
                     NotesApp.getInstance().getString(R.string.choose_password)
             } else if (!mEmail!!.isEmail()) {
                 mShowErrorSnackBar.value =
                     NotesApp.getInstance().getString(R.string.enter_valid_email)
             } else {
+//                val signUpDetailsModel = SavedDataModel()
+//                signUpDetailsModel.fullName = mFirstName
+//                signUpDetailsModel.emailId = mEmail
+//                signUpDetailsModel.number = mNumber
+//                signUpDetailsModel.password = mPassword
+
                 mSignUpRequest.firstName = mFirstName
                 mSignUpRequest.email = mEmail
                 mSignUpRequest.password = mPassword
+                mSignUpRequest.mobileNumber = mNumber
+                mSignUpRequest.channel = AuthTypes.MOBILE
+                mSignUpRequest.lastName = "."
                 verifySignUp()
+                //mAllFieldsVerified.value = signUpDetailsModel
             }
         } else {
             mShowErrorSnackBar.value = NotesApp.getInstance().getString(R.string.empty_fields)
         }
     }
 
+    fun onVerifyOtpClick(view: View) {
+    }
+
     /**
      * method to call API to verify login credentials
      */
     private fun verifySignUp() {
-        val disposable = NotesApp.getApiService()!!.studentSignUp(mSignUpRequest)
+        val disposable = NotesApp.getApiService()!!.studentSignUp(mSignUpRequest, true, false)
             .subscribeOn(NotesApp.subscribeScheduler())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe {
-                //isVisible.set(true)
+                mLoading.value = true
             }
             .doFinally {
-                //isVisible.set(false)
+                mLoading.value = false
             }
             .subscribe({ response ->
                 if (response.isSuccessful) {

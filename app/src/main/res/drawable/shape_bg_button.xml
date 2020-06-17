@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<ripple
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/color_ripple">     <!-- ripple color -->
+
+    <!-- for Button -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/orange" />
-            <!--corners allow us to make the rounded corners button-->
-            <corners android:radius="5dp" />
+            <corners android:radius="30dp" />
+            <solid android:color="@color/orange"/>
         </shape>
     </item>
-</selector>
+
+</ripple>

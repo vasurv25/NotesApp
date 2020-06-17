@@ -7,24 +7,27 @@ import android.view.View
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.notesapp.NotesApp
 import com.example.notesapp.NotesApp.Companion.getApiService
 import com.example.notesapp.NotesApp.Companion.subscribeScheduler
+import com.example.notesapp.R
 import com.example.notesapp.network.LoginRequest
 import com.example.notesapp.network.LoginResponse
 import com.example.utils.AuthTypes
 import com.example.utils.isEmail
+import com.example.utils.isValidPhoneNumber
+import com.example.utils.validatePhoneNumber
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import org.json.JSONObject
 import retrofit2.Response
 
 class LoginViewModel : ViewModel() {
 
     private val TAG = "LoginViewModel"
 
-    private var mEmail: String? = null
+    private var mUserName: String? = null
     private var mPassword: String? = null
-    var isEmailValid = ObservableBoolean()
+    var isUserNameValid = ObservableBoolean()
     var isPasswordValid = ObservableBoolean()
     var isVisible = ObservableBoolean()
     private var mLoginRequest: LoginRequest =
@@ -32,19 +35,20 @@ class LoginViewModel : ViewModel() {
     private var mLoginResponse: MutableLiveData<Response<LoginResponse>> = MutableLiveData()
     private var mCompositeDisposable: CompositeDisposable? = CompositeDisposable()
     var mShowErrorSnackBar: MutableLiveData<String> = MutableLiveData()
+    var mLoading: MutableLiveData<Boolean> = MutableLiveData()
 
-    val phoneWatcher = object : TextWatcher {
+    val emailWatcher = object : TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
         }
 
         override fun onTextChanged(edit: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            mEmail = edit.toString()
+            mUserName = edit.toString()
         }
 
         override fun afterTextChanged(edit: Editable?) {
             if (edit.toString().isEmail()) {
-                isEmailValid.set(true)
-                isEmailValid.notifyChange()
+                isUserNameValid.set(true)
+                isUserNameValid.notifyChange()
             }
         }
     }
@@ -67,43 +71,47 @@ class LoginViewModel : ViewModel() {
 
     fun onLoginClick(view: View) {
         Log.i(TAG, "onLoginClick")
-        isEmailValid.set(mEmail?.isEmail() ?: false)
-        isEmailValid.notifyChange()
-        isPasswordValid.set(mPassword?.isNotEmpty() ?: false)
-        isPasswordValid.notifyChange()
-        if (isEmailValid.get() && isPasswordValid.get()) {
-            mLoginRequest.username = mEmail
+        if (mUserName!!.isEmail() || mUserName!!.isValidPhoneNumber()) {
+            isUserNameValid.set(true)
+            isUserNameValid.notifyChange()
+        } else {
+            isUserNameValid.set(false)
+        }
+        if (isUserNameValid.get() && isPasswordValid.get()) {
+            mLoginRequest.username = mUserName
             mLoginRequest.password = mPassword
-            verifyLogin()
+            verifyLogin(view)
+        } else {
+            mShowErrorSnackBar.value = NotesApp.getInstance().getString(R.string.empty_fields)
         }
     }
 
     /**
      * method to call API to verify login credentials
      */
-    private fun verifyLogin() {
+    private fun verifyLogin(view: View) {
         val disposable = getApiService()!!.studentLogin(mLoginRequest)
             .subscribeOn(subscribeScheduler())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe {
-                //isVisible.set(true)
+                mLoading.value = true
             }
             .doFinally {
-                //isVisible.set(false)
+                mLoading.value = false
             }
             .subscribe({ response ->
                 if (response.isSuccessful) {
-                    if (response.body()?.data.isNullOrEmpty()) {
-                        mShowErrorSnackBar.value = response.body()?.error?.message
-                    } else {
+                    if (response.body()?.data?.token != null) {
                         mLoginResponse.value = response
+                    } else {
+                        mShowErrorSnackBar.value = response.body()?.error?.message
                     }
                 } else {
                     mShowErrorSnackBar.value = response.body()?.error?.message
                 }
             }, {
-                Log.i(TAG, "error login : " + it.localizedMessage)
-                mShowErrorSnackBar.value = it.localizedMessage
+                Log.i(TAG, "error login : " + it.message)
+                mShowErrorSnackBar.value = it.message
             })
         mCompositeDisposable!!.add(disposable)
     }
