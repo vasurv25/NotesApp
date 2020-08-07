@@ -71,12 +71,12 @@ class LoginViewModel : ViewModel() {
 
     fun onLoginClick(view: View) {
         Log.i(TAG, "onLoginClick")
-        if (mUserName!!.isEmail() || mUserName!!.isValidPhoneNumber()) {
-            isUserNameValid.set(true)
-            isUserNameValid.notifyChange()
-        } else {
-            isUserNameValid.set(false)
-        }
+        isUserNameValid.set(mUserName?.isNotEmpty() ?: false)
+        isUserNameValid.notifyChange()
+
+        isPasswordValid.set(mPassword?.isNotEmpty() ?: false)
+        isPasswordValid.notifyChange()
+
         if (isUserNameValid.get() && isPasswordValid.get()) {
             mLoginRequest.username = mUserName
             mLoginRequest.password = mPassword

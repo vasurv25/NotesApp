@@ -12,13 +12,15 @@ data class LoginRequest(
 
 data class Data(
     @SerializedName("token") val token: String?,
-    @SerializedName("userId") val userId: String?,
+    @SerializedName("userId") val studentId: String?,
     @SerializedName("username") val username: String?,
-    @SerializedName("mobileNumber") val mobileNumber: String?
+    @SerializedName("firstName") val firstName: String?,
+    @SerializedName("verified") val verified: Boolean?,
+    @SerializedName("mobileNumber") val smsOtp: String?
 ) : BaseModel()
 
 data class Error(
-    @SerializedName("status") val status: Int?,
+    @SerializedName("status") val status: String?,
     @SerializedName("statusCode") val statusCode: String?,
     @SerializedName("message") val message: String?
 ) : BaseModel()
@@ -40,14 +42,14 @@ data class SignUpRequest(
 ) : BaseModel()
 
 data class DataSignUp(
-    @SerializedName("user") val user: String?,
+    @SerializedName("studentId") val studentId: Int?,
     @SerializedName("firstName") val firstName: String?,
     @SerializedName("middleName") val middleName: String?,
     @SerializedName("lastName") val lastName: String?,
-    @SerializedName("userId") val email: String?,
-    @SerializedName("username") val mobileNumber: String?,
-    @SerializedName("mobileNumber") val channel: String?,
-    @SerializedName("smsOtp") val smsOtp: String?,
+    @SerializedName("email") val email: String?,
+    @SerializedName("mobileNumber") val mobileNumber: String?,
+    @SerializedName("channel") val channel: String?,
+    @SerializedName("smsOtp") val smsOtp: Int?,
     @SerializedName("mailOtp") val mailOtp: String?
 ) : BaseModel()
 
@@ -69,5 +71,15 @@ data class ForgetPasswordResponse(
 
 data class OtpDetails(
     @SerializedName("mailOtp") val mailOtp: String?,
-    @SerializedName("smsOtp") val smsOtp: String?
+    @SerializedName("smsOtp") val smsOtp: Int? = 0
+) : BaseModel()
+
+data class UpdateMobileNumberResponse(
+    @SerializedName("updateMobile") val updateMobile: UpdateMobile?,
+    @SerializedName("error") val error: Error?
+) : BaseModel()
+
+data class UpdateMobile(
+    @SerializedName("newMobileNumber") val newMobileNumber: String?,
+    @SerializedName("smsOtp") val smsOtp: Int? = 0
 ) : BaseModel()

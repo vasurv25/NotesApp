@@ -18,10 +18,10 @@ import androidx.databinding.DataBindingUtil
 import com.example.notesapp.base.BaseActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.example.notesapp.NotesAppSavedProfile
 import com.example.notesapp.R
 import com.example.notesapp.databinding.ActivitySignupBinding
-import com.example.notesapp.login.TestActivity
-import com.example.notesapp.network.SavedDataModel
+import com.example.notesapp.model.SavedDataModel
 import com.example.notesapp.network.SignUpResponse
 import com.example.utils.showSnackBar
 import kotlinx.android.synthetic.main.activity_signup.*
@@ -76,6 +76,13 @@ class SignUpActivity : BaseActivity() {
         mSignUpViewModel = ViewModelProviders.of(this).get(SignUpViewModel::class.java)
         mActivitySignupBinding.signUpModel = mSignUpViewModel
         mSignUpViewModel.signUpResponse().observe(this, Observer<Response<SignUpResponse>> { t ->
+            val savedDataModel = SavedDataModel()
+            savedDataModel.studentId = t.body()?.data?.studentId
+            savedDataModel.emailId = t.body()?.data?.email
+            savedDataModel.fullName = t.body()?.data?.firstName
+            savedDataModel.number = t.body()?.data?.mobileNumber
+            savedDataModel.otp = t.body()?.data?.smsOtp
+            NotesAppSavedProfile.savedDataModel = savedDataModel
             navigateToSignUpOtpScreen()
         })
 
@@ -96,9 +103,9 @@ class SignUpActivity : BaseActivity() {
 //                bt_login_circular_progress.revertAnimation {
 ////                    //revealButton()
 ////                    //fadeOutProgressDialog()
-////                    delayStartNextActivity()
+////                    startNextActivity()
 ////                }
-//                delayStartNextActivity()
+                //startNextActivity()
             }
         })
 
@@ -171,16 +178,8 @@ class SignUpActivity : BaseActivity() {
         }
     }
 
-    private fun delayStartNextActivity() {
-//        Handler().postDelayed({
-////            startActivity(
-////                Intent(
-////                    this,
-////                    TestActivity::class.java
-////                )
-////            )
-////        }, 100)
-        val intent = Intent(applicationContext, TestActivity::class.java)
+    private fun startNextActivity() {
+        val intent = Intent(applicationContext, SignUpOtpActivity::class.java)
         val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, bt_signUp_circular_progress, "")
         startActivity(intent, options.toBundle())
     }

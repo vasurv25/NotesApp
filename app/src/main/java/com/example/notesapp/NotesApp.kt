@@ -1,23 +1,18 @@
 package com.example.notesapp
 
 import android.app.Application
-import android.util.Log
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import com.example.notesapp.database.RoomDBHandler
 import com.example.notesapp.network.ApiInf
 import com.example.notesapp.network.RetrofitApiHandler
 import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
-import okhttp3.internal.Internal.instance
-import java.io.File
 
 class NotesApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
         api = RetrofitApiHandler(this).create()
-//        roomDatabaseHandler = RoomDBHandler(this)
+        roomDatabaseHandler = RoomDBHandler(this)
         instance = this
 //        CalligraphyConfig.initDefault(
 //            CalligraphyConfig.Builder()
@@ -51,13 +46,13 @@ class NotesApp : Application() {
             this.mScheduler = scheduler
         }
 
-        //
-//        private var roomDatabaseHandler: RoomDBHandler? = null
-//
-//        fun getDataHandler(): RoomDBHandler? {
-//            return roomDatabaseHandler
-//        }
-//
+
+        private var roomDatabaseHandler: RoomDBHandler? = null
+
+        fun getDataHandler(): RoomDBHandler? {
+            return roomDatabaseHandler
+        }
+
         fun getInstance(): NotesApp {
             return instance!!
         }

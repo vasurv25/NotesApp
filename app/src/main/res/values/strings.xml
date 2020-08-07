@@ -36,5 +36,31 @@
     <string name="dont_have_an_account">Don\'t have an account? Sign Up</string>
     <string name="you_will_get_an_otp_message">You will get an OTP message</string>
     <string name="verification_code_msg">Please type the verification code sent to</string>
-    <string name="resend_code_text">Didn\'t receive the code? RESEND</string>
+    <string name="resend_code_text">Didn\'t receive the code?</string>
+    <string name="sucessfully_registered">Sucessfully Registered</string>
+    <string name="verify_number_msg">Please verify your Phone Number</string>
+    <string name="send_otp">Send OTP</string>
+    <string name="hint_phone_number">Phone Number</string>
+    <string name="country_code">+91</string>
+    <string name="invalid_otp">Invalid OTP</string>
+    <string name="toast_otp_success_msg">OTP sent successfully</string>
+    <string name="resend_click_text"><u>RESEND</u></string>
+    <string name="branch_header">BRANCH</string>
+    <string name="course_header">COURSE</string>
+    <string name="title_activity_dashboard">DashboardActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 </resources>

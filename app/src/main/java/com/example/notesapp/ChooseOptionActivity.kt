@@ -28,12 +28,17 @@ class ChooseOptionActivity:BaseActivity() {
             iv_cp_faculty.startAnimation(animSlideDownFaculty)
             iv_cp_student.visibility = View.VISIBLE
             iv_cp_faculty.visibility = View.VISIBLE
-        },1000)
+        },500)
     }
 
     public fun navigateToStudentLogin(view: View) {
         val intent = Intent(applicationContext, LoginActivity::class.java)
         startActivity(intent)
 
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finishAffinity()
     }
 }

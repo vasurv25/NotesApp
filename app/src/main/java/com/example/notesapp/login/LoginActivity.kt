@@ -100,6 +100,9 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
             R.id.fl_get_started -> {
 
             }
+            R.id.layout_login_back -> {
+                finish()
+            }
         }
     }
 
@@ -306,9 +309,9 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
 ////                )
 ////            )
 ////        }, 100)
-        val intent = Intent(applicationContext, TestActivity::class.java)
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, bt_login_circular_progress, "")
-        startActivity(intent, options.toBundle())
+//        val intent = Intent(applicationContext, TestActivity::class.java)
+//        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, bt_login_circular_progress, "")
+//        startActivity(intent, options.toBundle())
     }
 
     private fun fadeOutProgressDialog() {

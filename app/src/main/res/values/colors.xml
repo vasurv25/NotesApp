@@ -25,4 +25,14 @@
     <color name="color_pin_bg">#f57244</color>
     <color name="color_pin_border">#fba843</color>
     <color name="color_ripple">#D84315</color>
+    <color name="color_tech_1">#008eda</color>
+    <color name="color_tech_2">#f484a8</color>
+    <color name="color_tech_3">#f4b85b</color>
+    <color name="color_tech_4">#ef8b50</color>
+    <color name="color_tech_5">#65d76e</color>
+    <color name="color_tech_6">#d94480</color>
+    <color name="color_tech_7">#856df6</color>
+    <color name="color_tech_8">#66d2d4</color>
+    <color name="color_branch_header">#868b97</color>
+    <color name="color_branch_item">#4e5865</color>
 </resources>

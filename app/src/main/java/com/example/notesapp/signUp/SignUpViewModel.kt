@@ -8,9 +8,11 @@ import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.notesapp.NotesApp
+import com.example.notesapp.NotesAppSavedProfile
 import com.example.notesapp.R
 import com.example.notesapp.network.SignUpRequest
 import com.example.notesapp.network.SignUpResponse
+import com.example.notesapp.network.UpdateMobileNumberResponse
 import com.example.utils.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -36,6 +38,7 @@ class SignUpViewModel :ViewModel() {
     private var mSignUpResponse: MutableLiveData<Response<SignUpResponse>> = MutableLiveData()
     private var mCompositeDisposable: CompositeDisposable? = CompositeDisposable()
     var mLoading: MutableLiveData<Boolean> = MutableLiveData()
+    private var mUpdateMobileResponse:  MutableLiveData<Response<UpdateMobileNumberResponse>> = MutableLiveData()
 
     val fullNameWatcher = object : TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -139,7 +142,22 @@ class SignUpViewModel :ViewModel() {
         }
     }
 
-    fun onVerifyOtpClick(view: View) {
+    fun onSendOtpClick(view: View) {
+        isNumberValid.set(mNumber?.isNotEmpty() ?: false)
+        isNumberValid.notifyChange()
+        if (isNumberValid.get()) {
+            if (!validatePhoneNumber(mNumber)) {
+                mShowErrorSnackBar.value =
+                    NotesApp.getInstance().getString(R.string.enter_phone_number)
+            } else {
+                val studentId = NotesAppSavedProfile.savedDataModel?.let {
+                    it.studentId
+                }
+                updateMobileNumber(studentId, mNumber)
+            }
+        } else {
+            mShowErrorSnackBar.value = NotesApp.getInstance().getString(R.string.empty_fields)
+        }
     }
 
     /**
@@ -173,8 +191,42 @@ class SignUpViewModel :ViewModel() {
         mCompositeDisposable!!.add(disposable)
     }
 
+    fun updateMobileNumber(studentId: Int?, newNumber: String?) {
+        val disposable =
+            NotesApp.getApiService()!!.updateSignUpMobileNumber(studentId!!, newNumber!!)
+                .subscribeOn(NotesApp.subscribeScheduler())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe {
+                    mLoading.value = true
+                }
+                .doFinally {
+                    mLoading.value = false
+                }
+                .subscribe({ response ->
+                    if (response.isSuccessful) {
+                        if (response.body()?.updateMobile?.smsOtp == 0 && response.body()?.updateMobile?.newMobileNumber == null) {
+                            mShowErrorSnackBar.value = response.body()?.error?.message
+                        } else {
+                            mUpdateMobileResponse.value = response
+                        }
+                    } else {
+                        val jObjError = JSONObject(response.errorBody()!!.string())
+                        mShowErrorSnackBar.value = jObjError.getString("message")
+                    }
+                }, {
+                    Log.i(TAG, "error login")
+                    mShowErrorSnackBar.value = it.localizedMessage
+
+                })
+        mCompositeDisposable!!.add(disposable)
+    }
+
     fun signUpResponse(): MutableLiveData<Response<SignUpResponse>> {
         return mSignUpResponse
+    }
+
+    fun updateNumberResponse(): MutableLiveData<Response<UpdateMobileNumberResponse>> {
+        return mUpdateMobileResponse
     }
 
     private fun unSubscribeFromObservable() {

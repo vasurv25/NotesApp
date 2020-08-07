@@ -2,22 +2,22 @@ package com.example.notesapp.signUp
 
 import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.text.*
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.example.notesapp.NotesAppSavedProfile
 import com.example.notesapp.R
 import com.example.notesapp.base.BaseActivity
 import com.example.notesapp.databinding.ActivitySignupOtpBinding
-import com.example.notesapp.network.SavedDataModel
-import com.example.notesapp.network.SignUpResponse
-import com.example.utils.KEY_SIGN_UP_DETAILS
+import com.example.notesapp.model.SavedDataModel
+import com.example.notesapp.network.UpdateMobileNumberResponse
 import com.example.utils.hideSoftKeyboard
 import com.example.utils.showSnackBar
 import kotlinx.android.synthetic.main.activity_signup_otp.*
@@ -37,7 +37,7 @@ class SignUpOtpActivity : BaseActivity(), View.OnFocusChangeListener, View.OnKey
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()
-        mSavedDataModel  = intent.getSerializableExtra(KEY_SIGN_UP_DETAILS) as SavedDataModel
+        //mSavedDataModel  = intent.getSerializableExtra(KEY_SIGN_UP_DETAILS) as SavedDataModel
     }
 
     private fun initBinding() {
@@ -45,18 +45,79 @@ class SignUpOtpActivity : BaseActivity(), View.OnFocusChangeListener, View.OnKey
         mSignupOtpBinding.clickHandler = this
         mSignUpViewModel = ViewModelProviders.of(this).get(SignUpViewModel::class.java)
         mSignupOtpBinding.signUpModel = mSignUpViewModel
-        mSignUpViewModel.signUpResponse().observe(this, Observer<Response<SignUpResponse>> { t ->
-            //navigateToSignUpOtpScreen()
+        mSignUpViewModel.updateNumberResponse().observe(this, Observer<Response<UpdateMobileNumberResponse>> { t ->
+            NotesAppSavedProfile.savedDataModel?.number = t.body()?.updateMobile?.newMobileNumber
+            NotesAppSavedProfile.savedDataModel?.otp = t.body()?.updateMobile?.smsOtp
+            bt_signup_otp_circular_progress.visibility = View.GONE
+            bt_signUp_otp_circular_progress_verify.visibility = View.VISIBLE
+            cl_sign_up_number_layout.visibility = View.INVISIBLE
+            cl_sign_up_otp_layout.visibility = View.VISIBLE
+            iv_signup_otp_number_edit_icon.visibility = View.VISIBLE
+            tv_signup_otp_edit_number.visibility = View.VISIBLE
+            layout_signUp_resend_text.visibility = View.VISIBLE
+            tv_signup_otp_msg.text = getString(R.string.verification_code_msg)
+            tv_signup_otp_edit_number.text = "+91 - " + et_sign_up_number.text.toString()
+            Toast.makeText(this, getString(R.string.toast_otp_success_msg), Toast.LENGTH_SHORT).show()
         })
+
+        mSignUpViewModel.mShowErrorSnackBar.observe(this, Observer { t ->
+            showErrorSnackBar(t.toString())
+        })
+
+        mSignUpViewModel.mLoading.observe(this, Observer { t ->
+            if (t == true) {
+                bt_signup_otp_circular_progress.startAnimation()
+            } else {
+                bt_signup_otp_circular_progress.revertAnimation()
+            }
+        })
+        tv_signup_otp_edit_number.text = "+91 - " + NotesAppSavedProfile.savedDataModel?.number
     }
 
     private fun showErrorSnackBar(msg: String) {
         showSnackBar(
             cl_snackbar_signUp_otp,
-            msg.toString(),
+            msg,
             ContextCompat.getColor(this, R.color.white),
             resources
         )
+    }
+
+    fun onClick(view: View) {
+        when(view.id) {
+            R.id.tv_signUp_resend_click -> {
+                NotesAppSavedProfile.savedDataModel?.let {
+                    mSignUpViewModel.updateMobileNumber(it.studentId, it.number)
+                }
+            }
+            R.id.bt_signUp_otp_circular_progress_verify -> {
+                checkForValidOtp()
+            }
+        }
+    }
+
+    private fun checkForValidOtp() {
+        if (getOtpNumber() == NotesAppSavedProfile.savedDataModel?.otp.toString()) {
+
+        } else {
+            showErrorSnackBar(getString(R.string.invalid_otp))
+        }
+    }
+
+    fun onEditNumberIconClick(view: View) {
+        when (view.id) {
+            R.id.iv_signup_otp_number_edit_icon -> {
+                bt_signup_otp_circular_progress.visibility = View.VISIBLE
+                bt_signUp_otp_circular_progress_verify.visibility = View.GONE
+                cl_sign_up_number_layout.visibility = View.VISIBLE
+                cl_sign_up_otp_layout.visibility = View.GONE
+                tv_signup_otp_edit_number.visibility = View.GONE
+                iv_signup_otp_number_edit_icon.visibility = View.GONE
+                layout_signUp_resend_text.visibility = View.GONE
+                tv_signup_otp_msg.text = resources.getString(R.string.verify_number_msg)
+                et_sign_up_number.text.clear()
+            }
+        }
     }
 
     private fun setPINListeners() {
@@ -197,5 +258,8 @@ class SignUpOtpActivity : BaseActivity(), View.OnFocusChangeListener, View.OnKey
 
     private fun getOtpNumber(): String {
         return pin_hidden_sign_up_edittext.text.toString()
+    }
+
+    override fun onBackPressed() {
     }
 }

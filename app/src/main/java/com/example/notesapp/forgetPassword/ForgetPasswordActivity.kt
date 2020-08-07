@@ -10,10 +10,12 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.example.notesapp.NotesAppSavedProfile
 import com.example.notesapp.R
 import com.example.notesapp.base.BaseActivity
 import com.example.notesapp.databinding.ActivityForgetPasswordBinding
@@ -21,6 +23,8 @@ import com.example.notesapp.network.ForgetPasswordResponse
 import com.example.utils.hideSoftKeyboard
 import com.example.utils.showSnackBar
 import kotlinx.android.synthetic.main.activity_forget_password.*
+import kotlinx.android.synthetic.main.activity_forget_password.iv_background
+import kotlinx.android.synthetic.main.activity_signup_otp.*
 import retrofit2.Response
 
 class ForgetPasswordActivity : BaseActivity(), View.OnFocusChangeListener, View.OnKeyListener, TextWatcher {
@@ -30,7 +34,6 @@ class ForgetPasswordActivity : BaseActivity(), View.OnFocusChangeListener, View.
 
     override fun init() {
         setPINListeners()
-        makeResendClickable()
     }
 
     private fun setPINListeners() {
@@ -71,24 +74,21 @@ class ForgetPasswordActivity : BaseActivity(), View.OnFocusChangeListener, View.
         mForgetPasswordViewModel = ViewModelProviders.of(this).get(ForgetPasswordViewModel::class.java)
         mActivityForgetPasswordBinding.forgetPasswordViewModel = mForgetPasswordViewModel
         mForgetPasswordViewModel.forgetPasswordResposne().observe(this, Observer<Response<ForgetPasswordResponse>> { t ->
+            NotesAppSavedProfile.savedDataModel?.otp = t.body()?.otpDetails?.smsOtp
             bt_fp_circular_progress.visibility = View.GONE
             bt_fp_circular_progress_verify.visibility = View.VISIBLE
             cl_number_layout.visibility = View.INVISIBLE
             cl_otp_layout.visibility = View.VISIBLE
             iv_number_edit_icon.visibility = View.VISIBLE
             tv_edit_number.visibility = View.VISIBLE
-            tv_fp_spannable.visibility = View.VISIBLE
+            layout_resend_text.visibility = View.VISIBLE
             tv_forget_password_msg.text = getString(R.string.verification_code_msg)
             tv_edit_number.text = "+91 - " + et_fp_number.text.toString()
+            Toast.makeText(this, getString(R.string.toast_otp_success_msg), Toast.LENGTH_SHORT).show()
         })
 
         mForgetPasswordViewModel.mShowErrorSnackBar.observe(this, Observer { t ->
-            showSnackBar(
-                cl_snackbar_forget_pass,
-                t.toString(),
-                ContextCompat.getColor(this, R.color.white),
-                resources
-            )
+            showErrorSnackBar(t.toString())
         })
 
         mForgetPasswordViewModel.mLoading.observe(this, Observer { t ->
@@ -106,11 +106,31 @@ class ForgetPasswordActivity : BaseActivity(), View.OnFocusChangeListener, View.
         })
     }
 
-    fun onVerifyOtpClick(view: View) {
+    private fun showErrorSnackBar(msg: String) {
+        showSnackBar(
+            cl_snackbar_forget_pass,
+            msg,
+            ContextCompat.getColor(this, R.color.white),
+            resources
+        )
+    }
+
+    fun onClick(view: View) {
             when (view.id) {
             R.id.bt_fp_circular_progress_verify -> {
                 bt_fp_circular_progress.stopAnimation()
             }
+            R.id.tv_fb_resend_click -> {
+                mForgetPasswordViewModel.verifyForgetPassword(et_fp_number.text.toString())
+            }
+        }
+    }
+
+    private fun checkForValidOtp() {
+        if (getFpOtpNumber() == NotesAppSavedProfile.savedDataModel?.otp.toString()) {
+
+        } else {
+            showErrorSnackBar(getString(R.string.invalid_otp))
         }
     }
 
@@ -123,7 +143,7 @@ class ForgetPasswordActivity : BaseActivity(), View.OnFocusChangeListener, View.
                 cl_otp_layout.visibility = View.GONE
                 tv_edit_number.visibility = View.GONE
                 iv_number_edit_icon.visibility = View.GONE
-                tv_fp_spannable.visibility = View.GONE
+                layout_resend_text.visibility = View.GONE
                 tv_forget_password_msg.text = resources.getString(R.string.you_will_get_an_otp_message)
                 et_fp_number.text.clear()
             }
@@ -247,20 +267,7 @@ class ForgetPasswordActivity : BaseActivity(), View.OnFocusChangeListener, View.
         return false
     }
 
-    private fun makeResendClickable() {
-        val spannable = SpannableString(resources.getString(R.string.resend_code_text))
-        val clickableSpan = object : ClickableSpan() {
-            override fun onClick(view: View) {
-                mForgetPasswordViewModel.verifyForgetPassword(et_fp_number.text.toString())
-            }
-
-            override fun updateDrawState(ds: TextPaint) {
-                super.updateDrawState(ds)
-                ds.color = ContextCompat.getColor(this@ForgetPasswordActivity, R.color.white)
-            }
-        }
-        spannable.setSpan(clickableSpan, 25, 31, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        tv_fp_spannable.text = spannable
-        tv_fp_spannable.movementMethod = LinkMovementMethod.getInstance()
+    private fun getFpOtpNumber(): String {
+        return pin_hidden_edittext.text.toString()
     }
 }

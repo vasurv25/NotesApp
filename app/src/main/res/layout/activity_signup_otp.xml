@@ -58,25 +58,53 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:letterSpacing="0.1"
-            android:text="Verification Code"
+            android:text="@string/sucessfully_registered"
             android:textColor="@color/orange"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/guideline_rect_vert"
-            app:layout_constraintStart_toStartOf="@+id/guideline_ellipse_ver"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
         <TextView
-            android:id="@+id/textView11"
+            android:id="@+id/tv_signup_otp_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="You will get an OTP message"
+            android:text="@string/verify_number_msg"
             android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@+id/guideline_background"
-            app:layout_constraintEnd_toStartOf="@+id/guideline_rect_vert"
-            app:layout_constraintStart_toStartOf="@+id/guideline_ellipse_ver"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView10"
             app:layout_constraintVertical_bias="0.13" />
+
+        <TextView
+            android:id="@+id/tv_signup_otp_edit_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="3.5sp"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/guideline_background"
+            app:layout_constraintEnd_toStartOf="@+id/iv_signup_otp_number_edit_icon"
+            app:layout_constraintStart_toStartOf="@+id/guideline_ellipse_ver"
+            app:layout_constraintTop_toBottomOf="@+id/tv_signup_otp_msg"
+            app:layout_constraintVertical_bias="0.5"
+            tools:text="+91 - 9876543210" />
+
+        <ImageView
+            android:id="@+id/iv_signup_otp_number_edit_icon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/ic_number_edit"
+            android:onClick="@{clickHandler::onEditNumberIconClick}"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/guideline_background"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_rect_vert"
+            app:layout_constraintTop_toBottomOf="@+id/tv_signup_otp_msg"
+            app:layout_constraintVertical_bias="0.5" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_ellipse_ver"
@@ -111,38 +139,108 @@
             app:layout_constraintTop_toTopOf="@+id/guideline_background" />
 
         <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-            android:id="@+id/bt_signUp_circular_progress"
+            android:id="@+id/bt_signUp_otp_circular_progress_verify"
             android:layout_width="0dp"
             android:layout_height="52dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="20dp"
-            app:spinning_bar_color="#FFF"
+            android:background="@drawable/shape_bg_button_white"
             android:gravity="center"
-            android:text="Verify OTP"
+            android:onClick="@{clickHandler::onClick}"
+            android:text="@string/verify_otp"
             android:textAllCaps="false"
             android:textColor="@color/color_orange_text"
             android:textSize="16sp"
-            android:onClick="@{signUpModel::onVerifyOtpClick}"
-            android:background="@drawable/shape_bg_button_white"
-            app:initialCornerAngle="30dp"
             app:finalCornerAngle="30dp"
-            app:spinning_bar_padding="6dp"
-            app:spinning_bar_width="4dp"
+            app:initialCornerAngle="30dp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_background"
             app:layout_constraintEnd_toStartOf="@+id/guideline_rect_vert"
             app:layout_constraintStart_toStartOf="@+id/guideline_ellipse_ver"
             app:layout_constraintTop_toBottomOf="@+id/cl_sign_up_otp_layout"
-            app:layout_constraintVertical_bias="0.17000002"/>
+            app:layout_constraintVertical_bias="0.17000002"
+            app:spinning_bar_color="#FFF"
+            app:spinning_bar_padding="6dp"
+            app:spinning_bar_width="4dp" />
+
+        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+            android:id="@+id/bt_signup_otp_circular_progress"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/shape_bg_button_white"
+            android:gravity="center"
+            android:onClick="@{signUpModel::onSendOtpClick}"
+            android:text="@string/send_otp"
+            android:textAllCaps="false"
+            android:textColor="@color/color_orange_text"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:finalCornerAngle="30dp"
+            app:initialCornerAngle="30dp"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_background"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_rect_vert"
+            app:layout_constraintStart_toStartOf="@+id/guideline_ellipse_ver"
+            app:layout_constraintTop_toBottomOf="@+id/cl_sign_up_number_layout"
+            app:layout_constraintVertical_bias="0.17000002"
+            app:spinning_bar_color="@color/orange"
+            app:spinning_bar_padding="6dp"
+            app:spinning_bar_width="4dp" />
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/cl_snackbar_signUp_otp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:elevation="2dp"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_sign_up_number_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100dp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_rect_vert"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline_ellipse_ver"
+            app:layout_constraintTop_toTopOf="@+id/iv_background">
+
+            <EditText
+                android:id="@+id/et_sign_up_country_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
+                android:enabled="false"
+                android:text="@string/country_code"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/et_sign_up_number"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:addTextChangedListener="@{signUpModel.numberWatcher}"
+                android:backgroundTint="@color/white"
+                android:hint="@string/hint_phone_number"
+                android:inputType="number"
+                android:maxLength="10"
+                android:textColor="@color/white"
+                android:textColorHint="@color/colorTransparentWhite"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/et_sign_up_country_code"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_sign_up_otp_layout"
@@ -151,77 +249,78 @@
             android:layout_marginStart="72dp"
             android:layout_marginTop="100dp"
             android:layout_marginEnd="72dp"
-            android:visibility="invisible"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/iv_background">
 
             <EditText
                 android:id="@+id/et_sign_up_otp_first"
+                style="@style/pin_edittext_style"
                 android:layout_width="36dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/shape_otp_border"
-                style="@style/pin_edittext_style"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
                 android:id="@+id/et_sign_up_otp_second"
+                style="@style/pin_edittext_style"
                 android:layout_width="36dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="5dp"
                 android:background="@drawable/shape_otp_border"
-                style="@style/pin_edittext_style"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/et_sign_up_otp_first"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
                 android:id="@+id/et_sign_up_otp_third"
+                style="@style/pin_edittext_style"
                 android:layout_width="36dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="5dp"
                 android:background="@drawable/shape_otp_border"
-                style="@style/pin_edittext_style"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/et_sign_up_otp_second"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
                 android:id="@+id/et_sign_up_otp_four"
+                style="@style/pin_edittext_style"
                 android:layout_width="36dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="5dp"
                 android:background="@drawable/shape_otp_border"
-                style="@style/pin_edittext_style"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/et_sign_up_otp_third"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
                 android:id="@+id/et_sign_up_otp_five"
+                style="@style/pin_edittext_style"
                 android:layout_width="36dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="5dp"
                 android:background="@drawable/shape_otp_border"
-                style="@style/pin_edittext_style"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/et_sign_up_otp_four"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
                 android:id="@+id/et_sign_up_otp_six"
+                style="@style/pin_edittext_style"
                 android:layout_width="36dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="5dp"
                 android:background="@drawable/shape_otp_border"
-                style="@style/pin_edittext_style"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/et_sign_up_otp_five"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <EditText android:id="@+id/pin_hidden_sign_up_edittext"
+            <EditText
+                android:id="@+id/pin_hidden_sign_up_edittext"
                 android:layout_width="1dp"
                 android:layout_height="1dp"
                 android:background="@null"
@@ -229,10 +328,10 @@
                 android:inputType="number"
                 android:maxLength="6"
                 android:textColor="@color/white"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.Guideline
@@ -242,5 +341,47 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.45" />
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_signUp_resend_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bt_signUp_otp_circular_progress_verify"
+            app:layout_constraintVertical_bias="0.8">
+
+            <TextView
+                android:id="@+id/tv_signUp_resend_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.07"
+                android:lineSpacingExtra="2.5sp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/resend_code_text"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/tv_signUp_resend_click"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_signUp_resend_click"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:letterSpacing="0.07"
+                android:lineSpacingExtra="2.5sp"
+                android:text="@string/resend_click_text"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:onClick="@{clickHandler::onClick}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
