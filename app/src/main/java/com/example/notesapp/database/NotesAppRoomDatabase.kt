@@ -5,13 +5,15 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.example.notesapp.database.dao.AddressDao
 import com.example.notesapp.database.dao.NotesListDao
+import com.example.notesapp.database.dbmodel.AddressDBModel
 import com.example.notesapp.database.dbmodel.NotesDBModel
 
 /**
  * room database class
  */
-@Database(entities = [NotesDBModel::class], version = 1, exportSchema = false)
+@Database(entities = [NotesDBModel::class, AddressDBModel::class], version = 1, exportSchema = false)
 @TypeConverters(ListConverter::class)
 abstract class NotesAppRoomDatabase : RoomDatabase() {
     companion object {
@@ -27,4 +29,5 @@ abstract class NotesAppRoomDatabase : RoomDatabase() {
     }
 
     internal abstract fun bookMarkNotesDao(): NotesListDao
+    internal abstract fun addressDao(): AddressDao
 }

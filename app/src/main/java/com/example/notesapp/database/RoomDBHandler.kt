@@ -1,35 +1,27 @@
 package com.example.notesapp.database
 
 import android.content.Context
-import android.os.AsyncTask
 import androidx.lifecycle.LiveData
+import com.example.notesapp.database.dbmodel.AddressDBModel
 import com.example.notesapp.database.dbmodel.NotesDBModel
+import com.example.notesapp.model.AddressDataModel
 import com.example.notesapp.model.NotesDataModel
 
 class RoomDBHandler(context: Context) {
 
     private var appRoomDatabase = NotesAppRoomDatabase.getInstance(context)
 
-    fun insertAllNotes(notesDataModel: NotesDataModel, listener: DBActivityListener) {
-        class InsertTask : AsyncTask<Void, Unit, Unit>() {
-            override fun doInBackground(vararg params: Void) {
-                val notes = NotesDBModel(
-                    notesDataModel.id,
-                    notesDataModel.subjectName,
-                    notesDataModel.author,
-                    notesDataModel.rating,
-                    notesDataModel.price,
-                    notesDataModel.bookMarked,
-                    notesDataModel.addedToCart
-                )
-                appRoomDatabase.bookMarkNotesDao().insertAllNotes(notes)
-            }
-            override fun onPostExecute(result: Unit) {
-                super.onPostExecute(result)
-                listener.insertAllNotesUpdate()
-            }
-        }
-        InsertTask().execute()
+    suspend fun insertAllNotes(notesDataModel: NotesDataModel): Long {
+        val notes = NotesDBModel(
+            notesDataModel.id,
+            notesDataModel.subjectName,
+            notesDataModel.author,
+            notesDataModel.rating,
+            notesDataModel.price,
+            notesDataModel.bookMarked,
+            notesDataModel.addedToCart
+        )
+        return appRoomDatabase.bookMarkNotesDao().insertAllNotes(notes)
     }
 
     fun getAllNotes() : LiveData<List<NotesDBModel>> {
@@ -40,40 +32,48 @@ class RoomDBHandler(context: Context) {
         return appRoomDatabase.bookMarkNotesDao().getBookMarkNotes(isCheck)
     }
 
-    fun getBookMarkIds(isCheck: Boolean, listener: DBActivityListener) {
-        class InsertTask : AsyncTask<Void, Unit, List<String>>() {
-            override fun doInBackground(vararg params: Void): List<String> {
-                return appRoomDatabase.bookMarkNotesDao().getBookMarkIds(isCheck)
-            }
-            override fun onPostExecute(result: List<String>) {
-                super.onPostExecute(result)
-                listener.getBookMarkIdUpdate(result)
-            }
-        }
-        InsertTask().execute()
+    fun getAddedToCartNotes(isCheck: Boolean): LiveData<List<NotesDBModel>> {
+        return appRoomDatabase.bookMarkNotesDao().getAddedToCartNotes(isCheck)
     }
 
-    fun updateBookMarkNotes(id : String, isBookMark : Boolean) {
-        class InsertTask : AsyncTask<Void, Unit, Unit>() {
-            override fun doInBackground(vararg params: Void) {
-                appRoomDatabase.bookMarkNotesDao().updateBookMarkNotes(id, isBookMark)
-            }
-        }
-        InsertTask().execute()
+    suspend fun getBookMarkIds(isCheck: Boolean): List<String> {
+        return appRoomDatabase.bookMarkNotesDao().getBookMarkIds(isCheck)
+
     }
 
-    fun updateAddToCartNotes(id : String, isAddedToCart : Boolean) {
-        class InsertTask : AsyncTask<Void, Unit, Unit>() {
-            override fun doInBackground(vararg params: Void) {
-                appRoomDatabase.bookMarkNotesDao().updateBookMarkNotes(id, isAddedToCart)
-            }
-        }
-        InsertTask().execute()
+    suspend fun getAddedToCartIds(isCheck: Boolean): List<String> {
+        return appRoomDatabase.bookMarkNotesDao().getAddedToCartIds(isCheck)
     }
 
-    fun deleteAllNotes() {
-        AsyncTask.execute{
-            appRoomDatabase.bookMarkNotesDao().deleteAllNotes()
-        }
+    suspend fun updateBookMarkNotes(id : String, isBookMark : Boolean): Int {
+        return appRoomDatabase.bookMarkNotesDao().updateBookMarkNotes(id, isBookMark)
+    }
+
+    suspend fun updateAddToCartNotes(id : String, isAddedToCart : Boolean): Int {
+        return appRoomDatabase.bookMarkNotesDao().updateAddToCartNotes(id, isAddedToCart)
+    }
+
+    suspend fun deleteAllNotes(): Int {
+        return appRoomDatabase.bookMarkNotesDao().deleteAllNotes()
+    }
+
+    suspend fun insertAddress(addressDataModel: AddressDataModel): Long {
+        val address = AddressDBModel()
+        address.houseNumber = addressDataModel.houseNumber
+        address.addressLine1 = addressDataModel.addressLine1
+        address.addressLine2 = addressDataModel.addressLine2
+        address.landmark = addressDataModel.landmark
+        address.city = addressDataModel.city
+        address.pincode = addressDataModel.pincode
+        address.isSelected = addressDataModel.isSelected
+        return appRoomDatabase.addressDao().insertAddress(address)
+    }
+
+    fun getAddress() : LiveData<List<AddressDBModel>> {
+        return appRoomDatabase.addressDao().getAddress()
+    }
+
+    suspend fun updateSelectedAddress(id: Int, isSelected: Boolean): Int {
+        return appRoomDatabase.addressDao().updateSelectedAddress(id, isSelected)
     }
 }

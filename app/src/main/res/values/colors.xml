@@ -35,4 +35,7 @@
     <color name="color_tech_8">#66d2d4</color>
     <color name="color_branch_header">#868b97</color>
     <color name="color_branch_item">#4e5865</color>
+    <color name="cart_color">#e4e4e4</color>
+    <color name="cart_quantity_color">#4b4b4b</color>
+    <color name="color_edit_text_background">#f4f6f9</color>
 </resources>

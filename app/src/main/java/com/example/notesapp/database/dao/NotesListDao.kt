@@ -7,7 +7,7 @@ import com.example.notesapp.database.dbmodel.NotesDBModel
 @Dao
 interface NotesListDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAllNotes(notesDBModel: NotesDBModel)
+    suspend fun insertAllNotes(notesDBModel: NotesDBModel): Long
 
     @Transaction
     @Query("Select * from NOTES_LIST_TABLE")
@@ -19,14 +19,22 @@ interface NotesListDao {
 
     @Transaction
     @Query("Select _id from NOTES_LIST_TABLE where bookMarked = :isCheck")
-    fun getBookMarkIds(isCheck: Boolean): List<String>
+    suspend fun getBookMarkIds(isCheck: Boolean): List<String>
+
+    @Transaction
+    @Query("Select _id from NOTES_LIST_TABLE where addedToCart = :isCheck")
+    suspend fun getAddedToCartIds(isCheck: Boolean): List<String>
+
+    @Transaction
+    @Query("Select * from NOTES_LIST_TABLE where addedToCart = :isCheck")
+    fun getAddedToCartNotes(isCheck: Boolean): LiveData<List<NotesDBModel>>
 
     @Query("DELETE FROM NOTES_LIST_TABLE")
-    fun deleteAllNotes()
+    suspend fun deleteAllNotes() : Int
 
     @Query("UPDATE NOTES_LIST_TABLE SET bookMarked= :bookMarked where _id = :id")
-    fun updateBookMarkNotes(id: String, bookMarked : Boolean)
+    suspend fun updateBookMarkNotes(id: String, bookMarked : Boolean) : Int
 
     @Query("UPDATE NOTES_LIST_TABLE SET addedToCart= :addedToCart where _id = :id")
-    fun updateAddToCartNotes(id: String, addedToCart : Boolean)
+    suspend fun updateAddToCartNotes(id: String, addedToCart : Boolean) : Int
 }

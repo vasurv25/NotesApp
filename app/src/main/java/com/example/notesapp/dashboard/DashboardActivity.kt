@@ -3,9 +3,6 @@ package com.example.notesapp.dashboard
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -20,6 +17,8 @@ import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import com.example.notesapp.R
+import com.example.notesapp.bookmark.BookMarkActivity
+import com.example.notesapp.cart.CartActivity
 import kotlinx.android.synthetic.main.app_bar_dashboard.*
 
 class DashboardActivity : AppCompatActivity() {
@@ -30,7 +29,7 @@ class DashboardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
+        setSupporrtActionBar(toolbar)
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
@@ -85,7 +84,12 @@ class DashboardActivity : AppCompatActivity() {
 
     private fun initView() {
         ib_toolbar_bookmark.setOnClickListener {
-            var intent = Intent(this, BookMarkActivity::class.java)
+            val intent = Intent(this, BookMarkActivity::class.java)
+            startActivity(intent)
+        }
+
+        ib_toolbar_cart.setOnClickListener {
+            val intent = Intent(this, CartActivity::class.java)
             startActivity(intent)
         }
     }

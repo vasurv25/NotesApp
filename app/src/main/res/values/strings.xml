@@ -63,4 +63,27 @@
     <string name="menu_send">Send</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
+    <string name="Rs">\u20B9</string>
+    <string name="my_wishlist">My Wishlist</string>
+    <string name="add_to_cart">ADD TO CART</string>
+    <string name="buy_now">BUY NOW</string>
+    <string name="cart_plus">+</string>
+    <string name="cart_minus">-</string>
+    <string name="my_cart">My Cart</string>
+    <string name="total">Total:</string>
+    <string name="toast_added_to_cart_msg">Notes added to Cart</string>
+    <string name="move_to_wishlist">MOVE TO WISHLIST</string>
+    <string name="toast_add_to_wishlist">Notes added To Wishlist</string>
+    <string name="checkout">Checkout</string>
+    <string name="add_new_delivery_address">Add New Delivery Address</string>
+    <string name="new_delivery_address">New Delivery Address</string>
+    <string name="delivery_address">Delivery Address</string>
+    <string name="house_number">House Number</string>
+    <string name="address_line_1">Address Line 1</string>
+    <string name="address_line_2">Address Line 2</string>
+    <string name="landmark">Landmark</string>
+    <string name="city">City</string>
+    <string name="pin_code">Pin code</string>
+    <string name="save_address">SAVE ADDRESS</string>
+    <string name="proceed_to_check_out">PROCEED TO CHECK OUT</string>
 </resources>

@@ -18,7 +18,7 @@ data class NotesDBModel(
     val author: String,
 
     @ColumnInfo(name = "rating")
-    val rating: String,
+    val rating: Float,
 
     @ColumnInfo(name = "price")
     val price: String,
